@@ -7,7 +7,7 @@ chrome.runtime.onInstalled.addListener(() => {
   
   // Listen for URL updates
   chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    if (changeInfo.url && changeInfo.url.includes(".yaml")) {
+    if (changeInfo.url && changeInfo.url.includes(".yaml") && !changeInfo.url.includes('login')) {
       const splitURL = changeInfo.url.split('/').slice(-1)
       
       chrome.notifications.create({
