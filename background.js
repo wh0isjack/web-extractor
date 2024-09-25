@@ -21,28 +21,37 @@ chrome.runtime.onInstalled.addListener(() => {
         ],
       });
 
-      function openPopup() {
+      function showYaml() {
         console.log('OPEN POPUP')
-        chrome.action.setPopup(
-          {
-            tabId: tabId,
-            popup: "index.html" 
-          }
-        )
+        // chrome.action.setPopup(
+        //   {
+        //     tabId: tabId,
+        //     popup: "index.html"
+        //   }
+        // )
+        chrome.scripting.executeScript({
+          target: { tabId: tabId },
+          files: ['content.js']
+        }, () => {
+          chrome.tabs.sendMessage(tabId, { command: 'showYaml', data: { splitURL }}, function(response) {
+            console.log('Response from content script:', response);
+          });
+        }); 
       }
 
-      async function sendYaml() {
-        console.log('SEND YAML')
-        chrome.runtime.sendMessage({text: 'this'})
-      }
+      function processYaml() {
+
+        console.log('SEND YAML');
+        chrome.runtime.sendMessage({ command: 'processYaml' });
+      }      
 
       chrome.notifications.onButtonClicked.addListener((
         notificationid, 
         buttonIndex
       ) => {
         buttonIndex === 0 
-          ? sendYaml()
-          : openPopup()
+          ? processYaml()
+          : showYaml()
       });
     }
 
